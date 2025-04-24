@@ -70,7 +70,69 @@ export const register = async (req, res) => {
 }
 
 export const login = async (req, res) => {
+    const {email, password} = req.body;
 
+    if (!email || !password) {
+        return res.status(200).json({
+            "success": false,
+            "message":"All fields required"
+        })
+    }
+
+    try {
+        const user = await db.user.findUnique({
+            where: {
+                email
+            }
+        })
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid credentials"
+            })
+        }
+
+        const token = await jwt.sign(
+            {id: user.id},
+            process.env.JWT_SECRET,
+            {expiresIn: "1d"}
+        )
+
+        res.cookie("jwt", token, {
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: 1000 * 60 * 60 * 24 * 7
+        })
+
+        res.status(201).json({
+            success: true,
+            message: "User logged in",
+            User: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                role: user.role,
+                image: user.image
+            }
+        })
+    } catch (error) {
+        console.error("Error logging in ", error);
+        res.status(400).json({
+            success: false,
+            message: "Error logging in"
+        })
+    }
 }
 
 export const logout = async (req, res) => {
