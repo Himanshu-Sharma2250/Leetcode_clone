@@ -157,5 +157,17 @@ export const logout = async (req, res) => {
 }
 
 export const check = async (req, res) => {
-
+    try {
+        res.status(200).json({
+            success: true,
+            message: "User authorized",
+            user: req.user
+        })
+    } catch (error) {
+        console.error("Error authorizing user ", error)
+        res.status(500).json({
+            success: false,
+            message: "Error authorizing user"
+        })
+    }
 }
