@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 8080;
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/problems", problemRoutes);
-app.use("api/v1/execute-code", executionRoute)
+app.use("/api/v1/execute-code", executionRoute)
 
 app.listen(PORT, () => {
     console.log("Server is listening at port : 8080")

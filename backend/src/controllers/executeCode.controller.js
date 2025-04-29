@@ -13,7 +13,7 @@ export const executeCode = async (req, res) => {
         }
 
         // prepare each test cases for judge0 batch submission
-        const submissions = stdin.map((input) = ({
+        const submissions = stdin.map((input) => ({
             source_code,
             language_id,
             stdin:input,
